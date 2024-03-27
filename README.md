@@ -15,3 +15,7 @@ A web-app of a trivia game involving nba players
 
 - Create simple layout
 - Create proxy API interaction
+
+### Misc
+
+- Create Docker file
