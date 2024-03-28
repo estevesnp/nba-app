@@ -1,7 +1,3 @@
-DROP DATABASE IF EXISTS nbaappdb;
-
-CREATE DATABASE nbaappdb;
-
 DROP TABLE IF EXISTS players;
 
 CREATE TABLE players (

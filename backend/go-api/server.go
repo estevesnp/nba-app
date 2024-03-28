@@ -1,6 +1,8 @@
 package main
 
 import (
+	"esteves/nba-api-server/nbadb"
+
 	"log"
 	"net/http"
 )
@@ -8,6 +10,15 @@ import (
 const port string = ":8080"
 
 func main() {
+
+	log.Println("Connecting to database")
+	db, err := nbadb.OpenDB()
+
+	if err != nil {
+		log.Fatal("Failed connecting to database:", err)
+	}
+
+	defer db.Close()
 
 	router := http.NewServeMux()
 	router.HandleFunc("GET /hello", handleHello)
@@ -17,17 +28,19 @@ func main() {
 		Handler: router,
 	}
 
-	log.Printf("Starting server on port %s\n", port)
-	err := server.ListenAndServe()
+	log.Println("Starting server on port", port)
+	err = server.ListenAndServe()
 
 	if err != nil {
-		log.Println(err)
+		log.Fatal("Failed to start server:", err)
 	}
 
-	log.Println("Shutting down server...")
+	defer server.Close()
+
+	log.Println("Shutting down server")
 }
 
 func handleHello(w http.ResponseWriter, r *http.Request) {
-	log.Printf("/hello request from %s\n", r.RemoteAddr)
+	log.Println("/hello request from", r.RemoteAddr)
 	w.Write([]byte("Hello World"))
 }
