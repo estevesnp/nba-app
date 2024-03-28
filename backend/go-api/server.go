@@ -10,7 +10,7 @@ const port string = ":8080"
 func main() {
 
 	router := http.NewServeMux()
-	router.HandleFunc("/hello", handleHello)
+	router.HandleFunc("GET /hello", handleHello)
 
 	server := http.Server{
 		Addr:    port,
