@@ -11,10 +11,10 @@ import (
 )
 
 type Player struct {
-	Id       int
-	Name     string
-	Position string
-	Team     string
+	Id       int    `json:"id"`
+	Name     string `json:"name"`
+	Position string `json:"position"`
+	Team     string `json:"team"`
 }
 
 func (p Player) String() string {
@@ -29,6 +29,10 @@ func OpenDB() (*sql.DB, error) {
 
 	user := os.Getenv("USER")
 	pass := os.Getenv("PASSWORD")
+
+	if user == "" || pass == "" {
+		log.Fatal("USER and PASSWORD must be set in .env file")
+	}
 
 	connStr := fmt.Sprintf("host=localhost port=5432 user=%s password=%s dbname=nbaappdb sslmode=disable", user, pass)
 
@@ -55,6 +59,25 @@ func CountPlayers(db *sql.DB) (int, error) {
 	row := db.QueryRow("SELECT COUNT(*) FROM players")
 	err := row.Scan(&count)
 	return count, err
+}
+
+func GetAllPlayers(db *sql.DB) ([]Player, error) {
+	rows, err := db.Query("SELECT id, name, position, team FROM players")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	players := []Player{}
+	for rows.Next() {
+		var player Player
+		err := rows.Scan(&player.Id, &player.Name, &player.Position, &player.Team)
+		if err != nil {
+			return nil, err
+		}
+		players = append(players, player)
+	}
+	return players, nil
 }
 
 func GetPlayerById(db *sql.DB, id int) (Player, error) {
