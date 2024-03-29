@@ -12,19 +12,31 @@ const port string = ":8080"
 
 func main() {
 
-	players, err := scraper.GetPlayerData()
-	if err != nil {
-		log.Fatal("Failed to get player data:", err)
-	}
-
-	_ = players
-
 	log.Println("Connecting to database")
 	db, err := nbadb.OpenDB()
 	if err != nil {
 		log.Fatal("Failed connecting to database:", err)
 	}
 	defer db.Close()
+
+	playerCount, err := nbadb.CountPlayers(db)
+	if err != nil {
+		log.Fatal("Failed to count players:", err)
+	}
+
+	if playerCount == 0 {
+		log.Println("Adding players to database")
+
+		players, err := scraper.GetPlayerData()
+		if err != nil {
+			log.Fatal("Failed to get player data:", err)
+		}
+
+		err = nbadb.AddAllPlayers(db, players)
+		if err != nil {
+			log.Fatal("Failed to add players to database:", err)
+		}
+	}
 
 	server := getServer()
 

@@ -39,3 +39,34 @@ func AddPlayer(db *sql.DB, player Player) error {
 	_, err := db.Exec("INSERT INTO players (id, name, position, team) VALUES ($1, $2, $3, $4)", player.Id, player.Name, player.Position, player.Team)
 	return err
 }
+
+func AddAllPlayers(db *sql.DB, players []Player) error {
+	for _, player := range players {
+		err := AddPlayer(db, player)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func CountPlayers(db *sql.DB) (int, error) {
+	var count int
+	row := db.QueryRow("SELECT COUNT(*) FROM players")
+	err := row.Scan(&count)
+	return count, err
+}
+
+func GetPlayerById(db *sql.DB, id int) (Player, error) {
+	var player Player
+	row := db.QueryRow("SELECT id, name, position, team FROM players WHERE id = $1", id)
+	err := row.Scan(&player.Id, &player.Name, &player.Position, &player.Team)
+	return player, err
+}
+
+func GetRandomPlayer(db *sql.DB) (Player, error) {
+	var player Player
+	row := db.QueryRow("SELECT id, name, position, team FROM players ORDER BY RANDOM() LIMIT 1")
+	err := row.Scan(&player.Id, &player.Name, &player.Position, &player.Team)
+	return player, err
+}
