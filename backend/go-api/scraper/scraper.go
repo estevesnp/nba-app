@@ -1,4 +1,4 @@
-package main
+package scraper
 
 import (
 	"bytes"
@@ -7,31 +7,22 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
+
+	"esteves/nba-api-server/nbadb"
 )
 
-type Player struct {
-	Id       int    `json:"id"`
-	Name     string `json:"name"`
-	Position string `json:"position"`
-	Team     string `json:"team"`
-}
-
-func main() {
+func GetPlayerData() ([]nbadb.Player, error) {
 	data, err := downloadPlayerData()
 	if err != nil {
-		log.Fatal("Error downloading player data:", err)
+		return nil, err
 	}
 
 	players, err := parsePlayerData(data)
 	if err != nil {
-		log.Fatal("Error parsing player data:", err)
+		return nil, err
 	}
 
-	err = savePlayersToJSON(players)
-	if err != nil {
-		log.Fatal("Error saving player data:", err)
-	}
+	return players, nil
 
 }
 
@@ -86,9 +77,9 @@ func downloadPlayerData() ([]byte, error) {
 
 }
 
-func parsePlayerData(data []byte) ([]Player, error) {
+func parsePlayerData(data []byte) ([]nbadb.Player, error) {
 
-	currentPlayers := []Player{}
+	currentPlayers := []nbadb.Player{}
 
 	var m map[string]interface{}
 	err := json.Unmarshal(data, &m)
@@ -113,7 +104,7 @@ func parsePlayerData(data []byte) ([]Player, error) {
 			continue
 		}
 
-		currentPlayers = append(currentPlayers, Player{
+		currentPlayers = append(currentPlayers, nbadb.Player{
 			Id:       int(p[0].(float64)),
 			Name:     fmt.Sprintf("%s %s", p[2], p[1]),
 			Position: p[11].(string),
@@ -126,25 +117,4 @@ func parsePlayerData(data []byte) ([]Player, error) {
 	}
 
 	return currentPlayers, nil
-}
-
-func savePlayersToJSON(players []Player) error {
-	data, err := json.Marshal(players)
-	if err != nil {
-		return err
-	}
-
-	file, err := os.Create("players.json")
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	_, err = file.Write(data)
-	if err != nil {
-		return err
-	}
-
-	return nil
-
 }
