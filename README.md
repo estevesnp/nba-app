@@ -6,9 +6,8 @@ A web-app of a trivia game involving nba players
 
 ### Backend (Go)
 
-- Create Rest API (protobuffs?)
-- Store information in PostgreSQL db and implement it into the API
-- Store player score
+- Protobuffs?
+- Store user score?
 
 ### Frontend (Svelte)
 

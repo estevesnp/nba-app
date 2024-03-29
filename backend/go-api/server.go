@@ -3,12 +3,12 @@ package main
 import (
 	"esteves/nba-api-server/nbadb"
 	"esteves/nba-api-server/scraper"
-	"strconv"
 
 	"database/sql"
 	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
 )
 
 const port string = ":8080"
