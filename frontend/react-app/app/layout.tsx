@@ -1,3 +1,5 @@
+import "./styles.css";
+
 export const metadata = {
   title: "My NBA App",
   description: "My Cool NBA App",
