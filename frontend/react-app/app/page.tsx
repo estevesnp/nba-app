@@ -1,12 +1,6 @@
 "use client";
 import { useState } from "react";
-
-type Player = {
-  id: number;
-  name: string;
-  position: string;
-  team: string;
-};
+import { Player } from "../types/Player";
 
 export default function Page() {
   const [player, setPlayer] = useState<Player | null>(null);
