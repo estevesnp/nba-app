@@ -9,7 +9,7 @@ A web-app of a trivia game involving nba players
 - Protobuffs?
 - Store user score?
 
-### Frontend (Svelte)
+### Frontend (React)
 
 - Create simple layout
 
