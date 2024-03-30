@@ -12,7 +12,6 @@ A web-app of a trivia game involving nba players
 ### Frontend (Svelte)
 
 - Create simple layout
-- Create proxy API interaction
 
 ### Misc
 
