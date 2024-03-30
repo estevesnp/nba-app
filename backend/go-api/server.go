@@ -50,10 +50,10 @@ func main() {
 
 func getServer() *http.Server {
 	router := http.NewServeMux()
-	router.HandleFunc("GET /hello", handleHello)
-	router.HandleFunc("GET /player", handleGetPlayers)
-	router.HandleFunc("GET /player/{id}", handleGetPlayerByID)
-	router.HandleFunc("GET /random", handleGetRandomPlayer)
+	router.HandleFunc("GET /hello", corsMiddleware(handleHello))
+	router.HandleFunc("GET /player", corsMiddleware(handleGetPlayers))
+	router.HandleFunc("GET /player/{id}", corsMiddleware(handleGetPlayerByID))
+	router.HandleFunc("GET /random", corsMiddleware(handleGetRandomPlayer))
 
 	server := http.Server{
 		Addr:    port,
@@ -61,6 +61,17 @@ func getServer() *http.Server {
 	}
 
 	return &server
+}
+
+func corsMiddleware(handler func(w http.ResponseWriter, r *http.Request)) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Credentials", "true")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET,DELETE,PATCH,POST,PUT,OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+
+		handler(w, r)
+	}
 }
 
 func handleHello(w http.ResponseWriter, r *http.Request) {
