@@ -35,7 +35,7 @@ export default function Game() {
       {player ? (
         <div>
           {imageLoaded ? (
-            <img
+            <Image
               src={`https://cdn.nba.com/headshots/nba/latest/260x190/${player.id}.png`}
               alt="Player Picture"
               width={260}
