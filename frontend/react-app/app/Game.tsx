@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { Player } from "../types/Player";
 import PlayerCard from "./PlayerCard";
+import GameButtons from "./GameButtons";
 
 export default function Game() {
   const [player, setPlayer] = useState<Player | null>(null);
@@ -26,6 +27,7 @@ export default function Game() {
       {error && <p className="errorMessage">{error}</p>}
 
       <PlayerCard player={player} />
+      <GameButtons player={player} />
     </div>
   );
 }
