@@ -14,8 +14,6 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    ports:
-      - "9000:9000"
     depends_on:
       - postgresql
 
@@ -28,5 +26,3 @@ services:
       POSTGRES_DB: nbaappdb
     volumes:
       - ./database/schema.sql:/docker-entrypoint-initdb.d/init.sql
-    ports:
-      - 5432:5432
