@@ -1,5 +1,6 @@
+import { useEffect } from "react";
 import { Player } from "@/types/Player";
-import { useState, useEffect } from "react";
+import teamNameMapData from "@/resources/teamNameMap.json";
 
 type AnswerDisplayProps = {
   displayNextPlayer: Function;
@@ -18,6 +19,7 @@ export default function AnswerDisplay({
   isCorrect,
   player,
 }: AnswerDisplayProps) {
+  const teamNameMap: { [key: string]: string } = teamNameMapData;
   function handleDisplayChange() {
     if (!displayAnswer) {
       return;
@@ -28,7 +30,7 @@ export default function AnswerDisplay({
     setTimeout(() => {
       setDisplayAnswer(false);
       displayNextPlayer();
-    }, 2000);
+    }, 1500);
   }
 
   useEffect(() => {
@@ -38,10 +40,17 @@ export default function AnswerDisplay({
   return (
     <div>
       {displayAnswer && (
-        <div>
-          <p>{isCorrect ? "Correct" : "Incorrect"}</p>
-          <p>The answer is {player?.team}</p>
-        </div>
+        <>
+          {isCorrect ? (
+            <h2 className="correctAnswer">Correct!</h2>
+          ) : (
+            <h2 className="incorrectAnswer">Incorrect!</h2>
+          )}
+          <p>
+            The answer was the{" "}
+            {player ? teamNameMap[player.team] : "unknown team"}
+          </p>
+        </>
       )}
     </div>
   );

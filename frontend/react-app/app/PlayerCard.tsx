@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
+import { Player } from "@/types/Player";
 import Image from "next/image";
-import { Player } from "../types/Player";
 
 interface PlayerCardProps {
   player: Player | null;

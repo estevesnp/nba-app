@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { Player } from "../types/Player";
+import { Player } from "@/types/Player";
 import PlayerCard from "./PlayerCard";
 import GameButtons from "./GameButtons";
 import AnswerDisplay from "./AnswerDisplay";

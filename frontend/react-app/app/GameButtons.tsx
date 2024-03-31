@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { Player } from "../types/Player";
-import teamNameMap from "../resources/teamNameMap.json";
+import { Player } from "@/types/Player";
+import teamNameMap from "@/resources/teamNameMap.json";
 
 interface GameButtonsProps {
   player: Player | null;
@@ -15,7 +15,7 @@ function createButtons(setButtons: Function, player: Player | null) {
     return;
   }
 
-  const teams = teamNameMap.teams;
+  const teams = Object.keys(teamNameMap);
 
   const teamButtons: string[] = [];
 
@@ -66,7 +66,7 @@ export default function GameButtons({
   }
 
   return (
-    <div>
+    <div className="gameButtons">
       {buttons.map((team, index) => (
         <button
           onClick={() => handleButtonClick(team)}
