@@ -22,7 +22,9 @@ The app will be running on localhost, port 3000.
 ### Frontend (React)
 
 - Improve visuals
+- Crop image to hide jerseys
 
 ### Misc
 
 - Add install alternatives
+- Check sharp package (npm i sharp)
