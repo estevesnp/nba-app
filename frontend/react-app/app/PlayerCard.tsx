@@ -34,8 +34,6 @@ export default function PlayerCard({ player }: PlayerCardProps) {
             />
           )}
           <h2>{player.name}</h2>
-          <p>Position: {player.position}</p>
-          <p>Team: {player.team}</p>
         </div>
       ) : (
         <p>Click the button to get a random player</p>

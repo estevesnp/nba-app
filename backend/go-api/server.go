@@ -3,6 +3,8 @@ package main
 import (
 	"esteves/nba-api-server/nbadb"
 	"esteves/nba-api-server/scraper"
+	"fmt"
+	"time"
 
 	"database/sql"
 	"encoding/json"
@@ -11,7 +13,7 @@ import (
 	"strconv"
 )
 
-const port string = ":8080"
+const port int = 9000
 
 var db *sql.DB
 
@@ -55,8 +57,10 @@ func getServer() *http.Server {
 	router.HandleFunc("GET /player/{id}", corsMiddleware(handleGetPlayerByID))
 	router.HandleFunc("GET /random", corsMiddleware(handleGetRandomPlayer))
 
+	portString := fmt.Sprintf(":%d", port)
+
 	server := http.Server{
-		Addr:    port,
+		Addr:    portString,
 		Handler: router,
 	}
 
@@ -131,6 +135,24 @@ func handleGetRandomPlayer(w http.ResponseWriter, r *http.Request) {
 }
 
 func checkDB(db *sql.DB) error {
+
+	connectionAttempts := 5
+	var err error
+
+	for i := 0; i < connectionAttempts; i++ {
+		err = db.Ping()
+		if err == nil {
+			break
+		}
+
+		log.Println("Failed to ping database, retrying in 5 seconds")
+		time.Sleep(5 * time.Second)
+	}
+
+	if err != nil {
+		return err
+	}
+
 	playerCount, err := nbadb.CountPlayers(db)
 	if err != nil {
 		return err

@@ -22,19 +22,26 @@ func (p Player) String() string {
 }
 
 func OpenDB() (*sql.DB, error) {
+
+	var user, pass string
+
 	err := godotenv.Load(".env")
 	if err != nil {
-		log.Fatal("Error loading .env file:", err)
-	}
+		log.Println("Error loading .env file, setting default values:", err)
 
-	user := os.Getenv("USER")
-	pass := os.Getenv("PASSWORD")
+		user = "postgres"
+		pass = "password"
+	} else {
+
+		user = os.Getenv("USER")
+		pass = os.Getenv("PASSWORD")
+	}
 
 	if user == "" || pass == "" {
 		log.Fatal("USER and PASSWORD must be set in .env file")
 	}
 
-	connStr := fmt.Sprintf("host=localhost port=5432 user=%s password=%s dbname=nbaappdb sslmode=disable", user, pass)
+	connStr := fmt.Sprintf("host=postgresql port=5432 user=%s password=%s dbname=nbaappdb sslmode=disable", user, pass)
 
 	return sql.Open("postgres", connStr)
 }
