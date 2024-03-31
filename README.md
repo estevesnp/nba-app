@@ -25,4 +25,4 @@ The app will be running on localhost, port 3000.
 
 ### Misc
 
-- Create Docker file
+- Add install alternatives
