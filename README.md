@@ -28,3 +28,4 @@ The app will be running on localhost, port 3000.
 
 - Add install alternatives
 - Check sharp package (npm i sharp)
+- Add nginx server to serve app and store images
