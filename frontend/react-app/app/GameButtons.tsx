@@ -4,12 +4,10 @@ import teamNameMap from "../resources/teamNameMap.json";
 
 interface GameButtonsProps {
   player: Player | null;
+  incrementScore: Function;
+  setDisplayAnswer: Function;
+  setIsCorrect: Function;
 }
-
-type GameButton = {
-  text: string;
-  isCorrect: boolean;
-};
 
 function createButtons(setButtons: Function, player: Player | null) {
   if (!player) {
@@ -35,20 +33,12 @@ function createButtons(setButtons: Function, player: Player | null) {
   setButtons(teamButtons);
 }
 
-function handleButtonClick(
-  setButtonsDisabled: Function,
-  team: string,
-  player: Player | null
-) {
-  if (!player) {
-    return;
-  }
-
-  console.log(team === player.team ? "Correct" : "Incorrect");
-  setButtonsDisabled(true);
-}
-
-export default function GameButtons({ player }: GameButtonsProps) {
+export default function GameButtons({
+  player,
+  incrementScore,
+  setDisplayAnswer,
+  setIsCorrect,
+}: GameButtonsProps) {
   const [buttons, setButtons] = useState<string[]>([]);
   const [buttonsDisabled, setButtonsDisabled] = useState(false);
 
@@ -57,11 +47,29 @@ export default function GameButtons({ player }: GameButtonsProps) {
     setButtonsDisabled(false);
   }, [player]);
 
+  function handleButtonClick(team: string) {
+    if (!player) {
+      return;
+    }
+
+    if (team === player.team) {
+      incrementScore();
+      setIsCorrect(true);
+      console.log("Correct");
+    } else {
+      setIsCorrect(false);
+      console.log("Incorrect");
+    }
+
+    setDisplayAnswer(true);
+    setButtonsDisabled(true);
+  }
+
   return (
     <div>
       {buttons.map((team, index) => (
         <button
-          onClick={() => handleButtonClick(setButtonsDisabled, team, player)}
+          onClick={() => handleButtonClick(team)}
           key={index}
           disabled={buttonsDisabled}
         >
