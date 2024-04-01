@@ -22,27 +22,40 @@ func (p Player) String() string {
 	return fmt.Sprintf("Id: %d, Name: %s, Position: %s, Team: %s", p.Id, p.Name, p.Position, p.Team)
 }
 
-func OpenDB() (*sql.DB, error) {
+var (
+	host   string
+	port   string
+	user   string
+	pass   string
+	dbname string
+)
 
-	var user, pass string
-
+func init() {
 	err := godotenv.Load(".env")
 	if err != nil {
 		log.Println("Error loading .env file, setting default values:", err)
 
+		host = "localhost"
+		port = "5432"
 		user = "postgres"
 		pass = "password"
+		dbname = "nbaappdb"
 	} else {
-
-		user = os.Getenv("USER")
-		pass = os.Getenv("PASSWORD")
+		host = os.Getenv("DB_HOST")
+		port = os.Getenv("DB_PORT")
+		user = os.Getenv("DB_USER")
+		pass = os.Getenv("DB_PASSWORD")
+		dbname = os.Getenv("DB_NAME")
 	}
 
-	if user == "" || pass == "" {
-		log.Fatal("USER and PASSWORD must be set in .env file")
+	if host == "" || port == "" || user == "" || pass == "" || dbname == "" {
+		log.Fatal("DB_HOST, DB_PORT, DB_USER and DB_PASSWORD must be set in .env file")
 	}
+}
 
-	connStr := fmt.Sprintf("host=postgres-db port=5432 user=%s password=%s dbname=nbaappdb sslmode=disable", user, pass)
+func OpenDB() (*sql.DB, error) {
+
+	connStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", host, port, user, pass, dbname)
 
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {

@@ -3,18 +3,35 @@ package main
 import (
 	"esteves/nba-api-server/nbadb"
 	"esteves/nba-api-server/scraper"
-	"fmt"
+	"os"
 
 	"database/sql"
 	"encoding/json"
 	"log"
 	"net/http"
 	"strconv"
+
+	"github.com/joho/godotenv"
 )
 
-const port int = 9000
+var (
+	port string
+	db   *sql.DB
+)
 
-var db *sql.DB
+func init() {
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Println("Error loading .env file, setting default port to 9000")
+		port = "9000"
+	} else {
+		port = os.Getenv("BACKEND_PORT")
+		if port == "" {
+			log.Println("BACKEND_PORT not set in .env file, setting default port to 9000")
+			port = "9000"
+		}
+	}
+}
 
 func main() {
 
@@ -24,9 +41,6 @@ func main() {
 	db, err = nbadb.OpenDB()
 	if err != nil {
 		log.Fatal("Failed connecting to database:", err)
-	}
-	if db == nil {
-		log.Fatal("Failed connecting to database: db is nil")
 	}
 	defer db.Close()
 
@@ -56,7 +70,7 @@ func getServer() *http.Server {
 	router.HandleFunc("GET /player/{id}", corsMiddleware(handleGetPlayerByID))
 	router.HandleFunc("GET /random", corsMiddleware(handleGetRandomPlayer))
 
-	portString := fmt.Sprintf(":%d", port)
+	portString := ":" + port
 
 	server := http.Server{
 		Addr:    portString,
