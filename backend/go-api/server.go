@@ -4,7 +4,6 @@ import (
 	"esteves/nba-api-server/nbadb"
 	"esteves/nba-api-server/scraper"
 	"fmt"
-	"time"
 
 	"database/sql"
 	"encoding/json"
@@ -135,23 +134,6 @@ func handleGetRandomPlayer(w http.ResponseWriter, r *http.Request) {
 }
 
 func checkDB(db *sql.DB) error {
-
-	connectionAttempts := 5
-	var err error
-
-	for i := 0; i < connectionAttempts; i++ {
-		err = db.Ping()
-		if err == nil {
-			break
-		}
-
-		log.Println("Failed to ping database, retrying in 5 seconds")
-		time.Sleep(5 * time.Second)
-	}
-
-	if err != nil {
-		return err
-	}
 
 	playerCount, err := nbadb.CountPlayers(db)
 	if err != nil {

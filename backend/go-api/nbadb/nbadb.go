@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
@@ -41,9 +42,28 @@ func OpenDB() (*sql.DB, error) {
 		log.Fatal("USER and PASSWORD must be set in .env file")
 	}
 
-	connStr := fmt.Sprintf("host=postgresql port=5432 user=%s password=%s dbname=nbaappdb sslmode=disable", user, pass)
+	connStr := fmt.Sprintf("host=postgres-db port=5432 user=%s password=%s dbname=nbaappdb sslmode=disable", user, pass)
 
-	return sql.Open("postgres", connStr)
+	db, err := sql.Open("postgres", connStr)
+	if err != nil {
+		return nil, err
+	}
+
+	connTries := 10
+	for i := 0; i < connTries; i++ {
+		err = db.Ping()
+		if err == nil {
+			break
+		}
+		log.Println("Failed to connect to database, retrying in 5 seconds")
+		time.Sleep(5 * time.Second)
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	return db, err
 }
 
 func AddPlayer(db *sql.DB, player Player) error {

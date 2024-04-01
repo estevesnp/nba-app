@@ -15,10 +15,10 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     depends_on:
-      postgresql:
+      postgres-db:
         condition: service_healthy
 
-  postgresql:
+  postgres-db:
     image: postgres:latest
     restart: always
     environment:
