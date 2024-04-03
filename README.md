@@ -82,8 +82,3 @@ The app will, by default, be running on localhost to whatever port you set.
 
 - Improve visuals
 - Crop image to hide jerseys
-
-### Misc
-
-- Check sharp package (npm i sharp)
-- Add nginx server to serve app and store images
