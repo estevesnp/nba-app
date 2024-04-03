@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY ./react-app /app
 
-RUN echo "BACKEND_HOST=backend\nBACKEND_PORT=9000" > /app/.env.local
+COPY ./docker.env /app/.env.local
 
 RUN npm install
 

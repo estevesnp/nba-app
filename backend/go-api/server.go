@@ -24,12 +24,14 @@ func init() {
 	if err != nil {
 		log.Println("Error loading .env file, setting default port to 9000")
 		port = "9000"
-	} else {
-		port = os.Getenv("BACKEND_PORT")
-		if port == "" {
-			log.Println("BACKEND_PORT not set in .env file, setting default port to 9000")
-			port = "9000"
-		}
+		return
+	} 
+
+	port = os.Getenv("BACKEND_PORT")
+
+	if port == "" {
+		log.Println("BACKEND_PORT not set in .env file, setting default port to 9000")
+		port = "9000"
 	}
 }
 

@@ -40,13 +40,15 @@ func init() {
 		user = "postgres"
 		pass = "password"
 		dbname = "nbaappdb"
-	} else {
-		host = os.Getenv("DB_HOST")
-		port = os.Getenv("DB_PORT")
-		user = os.Getenv("DB_USER")
-		pass = os.Getenv("DB_PASSWORD")
-		dbname = os.Getenv("DB_NAME")
+
+		return
 	}
+
+	host = os.Getenv("DB_HOST")
+	port = os.Getenv("DB_PORT")
+	user = os.Getenv("DB_USER")
+	pass = os.Getenv("DB_PASSWORD")
+	dbname = os.Getenv("DB_NAME")
 
 	if host == "" || port == "" || user == "" || pass == "" || dbname == "" {
 		log.Fatal("DB_HOST, DB_PORT, DB_USER and DB_PASSWORD must be set in .env file")
