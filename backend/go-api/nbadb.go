@@ -1,4 +1,4 @@
-package nbadb
+package main
 
 import (
 	"database/sql"

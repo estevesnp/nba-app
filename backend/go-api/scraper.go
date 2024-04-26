@@ -1,4 +1,4 @@
-package scraper
+package main
 
 import (
 	"bytes"
@@ -7,11 +7,15 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-
-	"esteves/nba-api-server/nbadb"
 )
 
-func GetPlayerData() ([]nbadb.Player, error) {
+type PlayerResponse struct {
+	ResultSets []struct {
+		RowSet [][]interface{} `json:"rowSet"`
+	} `json:"resultSets"`
+}
+
+func GetPlayerData() ([]Player, error) {
 	data, err := downloadPlayerData()
 	if err != nil {
 		return nil, err
@@ -77,44 +81,37 @@ func downloadPlayerData() ([]byte, error) {
 
 }
 
-func parsePlayerData(data []byte) ([]nbadb.Player, error) {
+func parsePlayerData(data []byte) ([]Player, error) {
+	players := []Player{}
 
-	currentPlayers := []nbadb.Player{}
+	var r PlayerResponse
 
-	var m map[string]interface{}
-	err := json.Unmarshal(data, &m)
+	err := json.Unmarshal(data, &r)
 	if err != nil {
 		return nil, err
 	}
 
-	resultSets, ok := m["resultSets"].([]interface{})
-	if !ok {
-		return nil, fmt.Errorf("resultSets not found")
-	}
+	for _, player := range r.ResultSets[0].RowSet {
 
-	allPlayers, ok := resultSets[0].(map[string]interface{})["rowSet"].([]interface{})
-	if !ok {
-		return nil, fmt.Errorf("rowSet not found")
-	}
-
-	for _, player := range allPlayers {
-		p := player.([]interface{})
-
-		if p[25] != "2023" {
+		if len(player) < 26 {
 			continue
 		}
 
-		currentPlayers = append(currentPlayers, nbadb.Player{
-			Id:       int(p[0].(float64)),
-			Name:     fmt.Sprintf("%s %s", p[2], p[1]),
-			Position: p[11].(string),
-			Team:     p[9].(string),
+		if player[25] != "2023" {
+			continue
+		}
+
+		players = append(players, Player{
+			Id:       int(player[0].(float64)),
+			Name:     fmt.Sprintf("%s %s", player[2], player[1]),
+			Position: player[11].(string),
+			Team:     player[9].(string),
 		})
 	}
 
-	if len(currentPlayers) == 0 {
+	if len(players) == 0 {
 		return nil, fmt.Errorf("no players found")
 	}
 
-	return currentPlayers, nil
+	return players, nil
 }

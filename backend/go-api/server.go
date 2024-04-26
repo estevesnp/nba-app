@@ -1,8 +1,6 @@
 package main
 
 import (
-	"esteves/nba-api-server/nbadb"
-	"esteves/nba-api-server/scraper"
 	"os"
 
 	"database/sql"
@@ -15,23 +13,23 @@ import (
 )
 
 var (
-	port string
-	db   *sql.DB
+	serverport string
+	db         *sql.DB
 )
 
 func init() {
 	err := godotenv.Load(".env")
 	if err != nil {
 		log.Println("Error loading .env file, setting default port to 9000")
-		port = "9000"
+		serverport = "9000"
 		return
-	} 
+	}
 
-	port = os.Getenv("BACKEND_PORT")
+	serverport = os.Getenv("BACKEND_PORT")
 
-	if port == "" {
+	if serverport == "" {
 		log.Println("BACKEND_PORT not set in .env file, setting default port to 9000")
-		port = "9000"
+		serverport = "9000"
 	}
 }
 
@@ -40,7 +38,7 @@ func main() {
 	log.Println("Connecting to database")
 
 	var err error
-	db, err = nbadb.OpenDB()
+	db, err = OpenDB()
 	if err != nil {
 		log.Fatal("Failed connecting to database:", err)
 	}
@@ -53,7 +51,7 @@ func main() {
 
 	server := getServer()
 
-	log.Println("Starting server on port", port)
+	log.Println("Starting server on port", serverport)
 	err = server.ListenAndServe()
 
 	if err != nil {
@@ -72,7 +70,7 @@ func getServer() *http.Server {
 	router.HandleFunc("GET /player/{id}", corsMiddleware(handleGetPlayerByID))
 	router.HandleFunc("GET /random", corsMiddleware(handleGetRandomPlayer))
 
-	portString := ":" + port
+	portString := ":" + serverport
 
 	server := http.Server{
 		Addr:    portString,
@@ -101,7 +99,7 @@ func handleHello(w http.ResponseWriter, r *http.Request) {
 func handleGetPlayers(w http.ResponseWriter, r *http.Request) {
 	log.Println("/players request from", r.RemoteAddr)
 
-	players, err := nbadb.GetAllPlayers(db)
+	players, err := GetAllPlayers(db)
 	if err != nil {
 		log.Println("Failed to get players:", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -124,7 +122,7 @@ func handleGetPlayerByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	player, err := nbadb.GetPlayerById(db, id)
+	player, err := GetPlayerById(db, id)
 	if err != nil {
 		log.Println("Failed to get player by ID:", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -138,7 +136,7 @@ func handleGetPlayerByID(w http.ResponseWriter, r *http.Request) {
 func handleGetRandomPlayer(w http.ResponseWriter, r *http.Request) {
 	log.Println("/random request from", r.RemoteAddr)
 
-	player, err := nbadb.GetRandomPlayer(db)
+	player, err := GetRandomPlayer(db)
 	if err != nil {
 		log.Println("Failed to get random player:", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -151,7 +149,7 @@ func handleGetRandomPlayer(w http.ResponseWriter, r *http.Request) {
 
 func checkDB(db *sql.DB) error {
 
-	playerCount, err := nbadb.CountPlayers(db)
+	playerCount, err := CountPlayers(db)
 	if err != nil {
 		return err
 	}
@@ -159,12 +157,12 @@ func checkDB(db *sql.DB) error {
 	if playerCount == 0 {
 		log.Println("Adding players to database")
 
-		players, err := scraper.GetPlayerData()
+		players, err := GetPlayerData()
 		if err != nil {
 			return err
 		}
 
-		err = nbadb.AddAllPlayers(db, players)
+		err = AddAllPlayers(db, players)
 		if err != nil {
 			return err
 		}
