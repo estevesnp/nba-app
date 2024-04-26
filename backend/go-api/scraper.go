@@ -78,7 +78,6 @@ func downloadPlayerData() ([]byte, error) {
 	data := buf.Bytes()
 
 	return data, nil
-
 }
 
 func parsePlayerData(data []byte) ([]Player, error) {
@@ -91,21 +90,21 @@ func parsePlayerData(data []byte) ([]Player, error) {
 		return nil, err
 	}
 
-	for _, player := range r.ResultSets[0].RowSet {
+	for _, pdata := range r.ResultSets[0].RowSet {
 
-		if len(player) < 26 {
+		if len(pdata) < 26 {
 			continue
 		}
 
-		if player[25] != "2023" {
+		if pdata[25] != "2023" {
 			continue
 		}
 
 		players = append(players, Player{
-			Id:       int(player[0].(float64)),
-			Name:     fmt.Sprintf("%s %s", player[2], player[1]),
-			Position: player[11].(string),
-			Team:     player[9].(string),
+			Id:       int(pdata[0].(float64)),
+			Name:     fmt.Sprintf("%s %s", pdata[2], pdata[1]),
+			Position: pdata[11].(string),
+			Team:     pdata[9].(string),
 		})
 	}
 

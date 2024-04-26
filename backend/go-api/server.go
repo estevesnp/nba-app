@@ -18,6 +18,7 @@ var (
 )
 
 func init() {
+
 	err := godotenv.Load(".env")
 	if err != nil {
 		log.Println("Error loading .env file, setting default port to 9000")
